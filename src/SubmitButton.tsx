@@ -2,7 +2,7 @@
 
 import { useFormStatus } from "react-dom";
 
-export const SubmitButton = () => {
+export const SubmitButton = ({ isSubmitted }: { isSubmitted: boolean }) => {
   const { pending } = useFormStatus();
 
   return (
@@ -11,7 +11,7 @@ export const SubmitButton = () => {
       disabled={pending}
       type="submit"
     >
-      {pending ? "Generating..." : "Generate"}
+      {pending ? "Revealing..." : isSubmitted ? "More" : "Reveal"}
     </button>
   );
 };

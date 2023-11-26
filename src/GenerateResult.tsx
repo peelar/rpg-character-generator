@@ -2,6 +2,9 @@
 
 import { Character } from "@/lib/schema";
 import React from "react";
+import { useFormStatus } from "react-dom";
+import { Skeleton } from "./Skeleton";
+import clsx from "clsx";
 
 const classEmojiMap: Record<Character["class"], string> = {
   rogue: "🏹",
@@ -43,31 +46,49 @@ export const GeneratedCharacters = ({
   characters: Character[];
 }) => {
   const [isCopied, setIsCopied] = React.useState(false);
+  const { pending } = useFormStatus();
 
   React.useEffect(() => {
     setIsCopied(false);
   }, [characters]);
 
   return (
-    <section className="flex flex-col gap-2">
-      <div className="grid grid-flow-col auto-cols-[360px] overflow-x-scroll gap-8 max-w-6xl pb-4 row-span-1">
-        {characters.map((character) => (
-          <CharacterCard key={character.name} {...character} />
-        ))}
+    <section>
+      <div className="flex items-center flex-col gap-4">
+        <p className="text-xl">
+          You walk into a tavern and see these three troublemakers sitting at a
+          table:
+        </p>
+        <div className="grid grid-flow-col auto-cols-[360px] gap-8 max-w-6xl pb-4 row-span-1">
+          {(characters.length === 0 || pending) &&
+            Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton
+                loading={pending}
+                className={clsx("h-96 w-full")}
+                key={`skeleton-${i}`}
+              />
+            ))}
+          {!pending &&
+            characters.map((character) => (
+              <CharacterCard key={character.name} {...character} />
+            ))}
+        </div>
       </div>
-      <div className="flex flex-row-reverse mt-2">
-        <button
-          type="button"
-          className="p-2 shadow-sm hover:bg-gray-50 border-2 border-gray-600 rounded-md"
-          onClick={() => {
-            const json = JSON.stringify(characters);
-            navigator.clipboard.writeText(json);
-            setIsCopied(true);
-          }}
-        >
-          {isCopied ? "Copied!" : "Copy JSON"}
-        </button>
-      </div>
+      {characters.length > 0 && (
+        <div className="flex flex-row-reverse mt-2">
+          <button
+            type="button"
+            className="p-2 shadow-sm hover:bg-gray-50 border-2 border-gray-600 rounded-md"
+            onClick={() => {
+              const json = JSON.stringify(characters);
+              navigator.clipboard.writeText(json);
+              setIsCopied(true);
+            }}
+          >
+            {isCopied ? "Copied!" : "Copy JSON"}
+          </button>
+        </div>
+      )}
     </section>
   );
 };

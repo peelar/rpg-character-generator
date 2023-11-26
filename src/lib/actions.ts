@@ -8,17 +8,42 @@ const textToCharacter = (text: string) => {
   return characterSchema.parse(JSON.parse(text));
 };
 
-const N = 3;
+const N = 5;
 
 const prompt = `Generate ${N} unique characters for a fantasy RPG game. Each character should have a level and stats (strength, dexterity, intelligence, charisma) ranging from 1 to ${MAX}. Bio must be shorter than ${BIO_MAX_LENGTH} characters. Ensure that each character has a distinct and unique name, with no repetitions or similar-sounding names. Each name should be clearly different from the others, reflecting a variety of origins and styles. The generated characters should not be from an existing fantasy franchise`;
+
+function filterOutCharacterWithSimilarNames(characters: Character[]) {
+  const filteredCharacters = characters.filter((character) => {
+    const words = character.name.split(" ");
+    const filteredWords = words.filter(
+      (word) => word === "the" || word.length > 2
+    );
+
+    const hasSimilarName = characters.some(
+      (otherCharacter) =>
+        otherCharacter.name !== character.name &&
+        filteredWords.some((word) => otherCharacter.name.includes(word))
+    );
+
+    if (hasSimilarName) {
+      console.log(
+        `Character ${character.name} filtered out because there is already a character with a similar name.`
+      );
+    }
+
+    return !hasSimilarName;
+  });
+
+  return filteredCharacters;
+}
 
 export async function generateRpgCharacter() {
   console.log("Generating RPG characters...");
   const parameters = zodToJsonSchema(characterSchema);
 
   const response = await openai.chat.completions.create({
-    temperature: 0.8,
-    model: "gpt-4",
+    temperature: 1.5,
+    model: "gpt-3.5-turbo-1106",
     messages: [
       {
         content: prompt,
@@ -34,7 +59,6 @@ export async function generateRpgCharacter() {
     ],
     function_call: { name: "output_formatter" },
     n: N,
-    seed: Math.floor(Math.random() * 100000),
   });
 
   const characters = response.choices.reduce((prev, next) => {
@@ -55,7 +79,13 @@ export async function generateRpgCharacter() {
     }
   }, [] as Character[]);
 
-  console.log("Returning generated characters");
+  console.log("Parsed characters");
+  console.log(characters);
 
-  return { data: characters as Character[] };
+  const filteredCharacters = filterOutCharacterWithSimilarNames(characters);
+
+  console.log("Filtered characters");
+  console.log(filteredCharacters);
+
+  return { data: filteredCharacters.slice(0, 3) as Character[] };
 }
