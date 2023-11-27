@@ -5,7 +5,7 @@ export default function Home() {
     <div className="flex flex-col justify-evenly h-screen">
       <header className="flex justify-center items-center h-[10vh]">
         <h1 className="font-black text-stone-900 text-5xl">
-          RPG Characters Generator
+          Fantasy Characters Generator
         </h1>
       </header>
       <main className="h-[40vh]">

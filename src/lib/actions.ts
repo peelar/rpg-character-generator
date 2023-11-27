@@ -8,7 +8,7 @@ const textToCharacter = (text: string) => {
   return characterSchema.parse(JSON.parse(text));
 };
 
-const N = 5;
+const N = 8;
 
 const prompt = `Generate ${N} unique characters for a fantasy RPG game. Each character should have a level and stats (strength, dexterity, intelligence, charisma) ranging from 1 to ${MAX}. Bio must be shorter than ${BIO_MAX_LENGTH} characters. Ensure that each character has a distinct and unique name, with no repetitions or similar-sounding names. Each name should be clearly different from the others, reflecting a variety of origins and styles. The generated characters should not be from an existing fantasy franchise`;
 
