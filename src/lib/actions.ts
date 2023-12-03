@@ -2,7 +2,7 @@
 
 import zodToJsonSchema from "zod-to-json-schema";
 import { openai } from "./openai";
-import { BIO_MAX_LENGTH, Character, MAX, characterSchema } from "./schema";
+import { BIO_MAX_LENGTH, Character, MAX_STAT, characterSchema } from "./schema";
 
 const textToCharacter = (text: string) => {
   return characterSchema.parse(JSON.parse(text));
@@ -10,7 +10,7 @@ const textToCharacter = (text: string) => {
 
 const N = 8;
 
-const prompt = `Generate ${N} unique characters for a fantasy RPG game. Each character should have a level and stats (strength, dexterity, intelligence, charisma) ranging from 1 to ${MAX}. Bio must be shorter than ${BIO_MAX_LENGTH} characters. Ensure that each character has a distinct and unique name, with no repetitions or similar-sounding names. Each name should be clearly different from the others, reflecting a variety of origins and styles. The generated characters should not be from an existing fantasy franchise`;
+const prompt = `Generate ${N} unique characters for a fantasy RPG game. Each character should have a level and stats (strength, dexterity, intelligence, charisma) ranging from 1 to ${MAX_STAT}. Bio must be shorter than ${BIO_MAX_LENGTH} characters. Ensure that each character has a distinct and unique name, with no repetitions or similar-sounding names. Each name should be clearly different from the others, reflecting a variety of origins and styles. The generated characters should not be from an existing fantasy franchise`;
 
 function filterOutCharacterWithSimilarNames(characters: Character[]) {
   const filteredCharacters = characters.filter((character) => {
